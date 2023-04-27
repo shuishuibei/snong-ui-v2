@@ -1,0 +1,218 @@
+@titleHeight: 24px;
+
+.virtual-detail-container {
+  position: absolute;
+  background-color: #f1f1f1;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  min-width: 1176px;
+  overflow: auto;
+
+  .virtual-detail-row {
+    height: 100%;
+    width: 100%;
+    position: relative;
+
+    .virtual-detail-left {
+      height: 100%;
+      width: 32%;
+      .base-info {
+        background-color: #fff;
+        border: 1px solid #d8e0eb;
+        padding: 10px 15px;
+      }
+
+      .lease-info {
+        background-color: #fff;
+        border: 1px solid #d8e0eb;
+        padding: 10px 15px;
+        margin-top: 12px;
+        height: calc(~'100% - 464px');
+        min-height: 146px;
+      }
+    }
+
+    .virtual-detail-right {
+      overflow-x: auto;
+      height: 100%;
+      min-height: 609px;
+      width: calc(~'68% - 12px');
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      .virtual-detail-right-tab {
+        height: 100%;
+        background-color: #fff;
+        border-top: none;
+
+        /deep/.ivu-tabs-content {
+          height: auto !important;
+        }
+
+        .hard-config {
+          height: 100%;
+          padding: 10px 0;
+          .hard-config-header {
+            margin-bottom: 10px;
+            .hard-config-title {
+              float: left;
+              line-height: 34px;
+              height: 34px;
+            }
+          }
+          .page-container {
+            margin-top: 10px;
+          }
+          .disk {
+            margin: 10px 0;
+            .disk-table-page {
+              position: relative;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .title-line {
+    position: relative;
+    padding-left: 8px;
+    padding-bottom: 6px;
+    height: @titleHeight + 6px;
+    line-height: @titleHeight + 6px;
+    border-bottom: 1px solid #d5d8db;
+
+    &:before {
+      position: absolute;
+      background-color: #ff0042;
+      content: "";
+      width: 3px;
+      height: 18px;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+  }
+
+  .info-list {
+    list-style-type: none;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #666;
+    li {
+      padding: 0 10px;
+    }
+
+    &.base-info-list {
+
+      @listInfoLeftWidth: 100px;
+
+      .base-info-list-left {
+        float: left;
+        width: @listInfoLeftWidth;
+        text-align: right;
+        padding-right: 6px;
+      }
+
+      .base-info-list-right {
+        float: left;
+        width: calc(~'100% - @{listInfoLeftWidth}');
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+    }
+
+    &.lease-info-list {
+      .lease-info-list-left {
+        float: left;
+        width: 100px;
+        text-align: right;
+        padding-right: 6px;
+      }
+
+      .lease-info-list-right {
+        float: left;
+        text-align: left;
+        width: calc(~'100% - 100px');
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    @liHeight: 30px;
+    li {
+       height: @liHeight;
+      line-height: @liHeight;
+      & > div {
+        height: @liHeight;
+      }
+      &:nth-child(2n+1) {
+        background-color: #f5f8fd;
+      }
+
+      &:after {
+        content: "";
+        display: block;
+        clear: both;
+      }
+    }
+  }
+}
+
+// .virtual-detail-right-tab {
+//   height: auto;
+//   /deep/ .ivu-tabs {
+//     height: auto;
+//     .ivu-tabs-bar {
+//       background-color: #f1f1f1;
+//       margin-bottom: 0;
+//       .ivu-tabs-nav {
+//         .ivu-tabs-tab {
+//           border-color: #d8e0eb;
+//           border-radius: 10px 10px 0 0;
+//         }
+//       }
+//     }
+//     .ivu-tabs-content {
+//       height: auto !important;
+//       .ivu-tabs-tabpane {
+//         height: auto;
+//         border: 1px solid #ddd;
+//         border-top: none;
+//       }
+//     }
+//   }
+// }
+
+.password-top > div {
+  float: left;
+}
+
+
+.black-ball {
+  position: relative;
+  top: 40%;
+  float: left;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #666;
+  margin: 0 1px;
+}
+
+.icon-htmal5icon09 {
+  color: #76ccfe;
+  font-size: 1rem;
+}
+
+.icon-yincangbukejian {
+  color: #76ccfe;
+  font-size: 1rem;
+}

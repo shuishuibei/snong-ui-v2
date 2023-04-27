@@ -1,0 +1,55 @@
+.ivu-table {
+
+  // 表格内图标样式
+  .iconfont {
+    color: @primary-color;
+    cursor: pointer;
+
+    &:hover {
+      color: spin(@primary-color, 8);
+    }
+
+    &:before {
+      font-size: 18px;
+    }
+
+    &:hover:before {
+      font-size: 22px;
+    }
+  }
+
+  .iconfont[disabled] {
+    color: #c5c8ce;
+    cursor: not-allowed;
+
+    &:before {
+      font-size: 18px;
+    }
+  }
+
+  // 表格内可操作单元格演示
+  .ivu-table-tbody {
+    .cell-info-active {
+      color: @primary-color;
+      cursor: pointer;
+
+      &:hover {
+        color: spin(@primary-color, 8);
+      }
+    }
+  }
+
+  // 表格中强制不换行class为ivu-table-cell-ellipsis，将span设置为行内块元素当出现省略号时鼠标在省略号上才能显示title
+  .ivu-table-cell-ellipsis span {
+    display: inline;
+  }
+
+  .ivu-table-cell {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+.ivu-table-filter-list {
+  max-height: 230px;
+}

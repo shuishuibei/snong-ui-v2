@@ -1,0 +1,23 @@
+{
+  "generator-h3c": {
+    "version": "1.0.0",
+    "props": {
+      "resolved": "E:\\generator-h3c\\generators\\app\\index.js",
+      "namespace": "h3c:app",
+      "_": [],
+      "skip-cache": false,
+      "skip-install": false,
+      "force-install": false,
+      "framework": "vue",
+      "js": "babel",
+      "modules": "webpack",
+      "css": "less",
+      "type": "PC",
+      "title": "newProtal",
+      "version": "1.0.0",
+      "description": "",
+      "main": "main.js",
+      "author": "h3c"
+    }
+  }
+}

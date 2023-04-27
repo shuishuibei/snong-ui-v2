@@ -1,0 +1,39 @@
+.weekly-report-component{
+    // 禁用状态下背景颜色
+    .ivu-input[disabled], fieldset[disabled] .ivu-input {
+        background-color: #FFFFFF;
+    }
+    // 禁用状态下字体颜色
+    .ivu-input[disabled] {
+        color: #495060;
+    }
+    .study {
+        .ivu-input-wrapper {
+            width: 93%;
+        }
+        .study-title {
+            .ivu-input-type {
+                input {
+                    outline: none;
+                    background-color: transparent !important;
+                    font-family: Microsoft YaHei;
+                    color: #64707C;
+                    font-size: 14px;
+                    vertical-align: top;
+                    padding-left: 0;
+                }
+                .ivu-input {
+                    border: none !important ;
+                }
+            }
+        }
+        .study-bottom {
+            .ivu-input {
+                resize:none
+            }
+        }
+        textarea {
+            cursor: default !important;
+        }
+    }
+}

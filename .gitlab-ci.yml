@@ -1,0 +1,21 @@
+stages:
+- sonar-scan
+
+#sonar-preview:
+#  stage: sonar-scan
+#  script:
+#  - source /etc/profile
+#  - sonar-scanner -Dsonar.analysis.mode=preview -Dsonar.gitlab.commit_sha=$CI_BUILD_REF -Dsonar.gitlab.ref_name=$CI_BUILD_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID
+
+sonar-analysis:
+  stage: sonar-scan
+  script:
+  - source /etc/profile
+  - sonar-scanner
+
+#sonar-scan:
+#  stage: sonar-scan
+#  script:
+#  - source /etc/profile
+#  - sonar-scanner
+#  - sonar-scanner -Dsonar.analysis.mode=preview -Dsonar.gitlab.commit_sha=$CI_BUILD_REF -Dsonar.gitlab.ref_name=$CI_BUILD_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID

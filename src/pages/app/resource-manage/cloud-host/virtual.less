@@ -1,0 +1,101 @@
+.virtual-machine-container {
+  position: relative;
+  min-height: 100%;
+  height: 100%;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background-color: #f1f1f1;
+
+  .virtual-refresh span {
+    padding-left: 5px;
+  }
+
+  .virtual-machine-header {
+    background-color: #fff;
+    padding-bottom: 15px;
+  }
+
+}
+
+.statusCircle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ivu-table-cell-ellipsis {
+  word-break: keep-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /*运行中*/
+  &.active {
+    background-color: #16da76;
+  }
+  /*创建中*/
+  &.build {
+    background-color: #01aaf8;
+  }
+  /*异常*/
+  &.error {
+    background-color: #fd4903;
+  }
+  /*已停止*/
+  &.shutoff {
+    background-color: #919294;
+  }
+  /*已挂起*/
+  &.suspended {
+    background-color: #fec615;
+  }
+  /*未知状态*/
+  &.unknown_state {
+    background-color: #ffa904;
+  }
+  &.unknown {
+  }
+  /*配置中*/
+  &.verify_resize {
+    background-color: #60c5fe;
+  }
+  /*重启中*/
+  &.reboot {
+    background-color: #97ace6;
+  }
+  /*续租中*/
+  &.extend {
+    background-color: #08dbd4;
+  }
+  /*退订中*/
+  &.delete {
+    background-color: #6a798c;
+  }
+  /*修改中*/
+  &.flavor {
+    background-color: #bf88d9;
+  }
+  /*冷启动*/
+  &.hard_reboot {
+    background-color: #97abe6;
+  }
+  /*停止*/
+  &.stopped {
+    background-color: #929394;
+  }
+}
+
+@media (max-width: 1450px) {
+  .virtual-machine-header {
+    .virtual-media {
+      display: block;
+      width: 100%;
+      .virtual-machine-operate {
+        margin-top: 10px;
+        float: left;
+      }
+    }
+  }
+}

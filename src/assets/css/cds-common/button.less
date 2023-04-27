@@ -1,0 +1,52 @@
+/*自定义按钮公共类*/
+
+// 查询按钮
+.cds-btn-search {
+  width: 40px !important;
+
+  .iconfont {
+    vertical-align: middle;
+
+    &:before {
+      padding-right: 0 !important;
+    }
+  }
+}
+// 操作按钮
+.cds-btn-operate {
+  width: 40px !important;
+  height: 25px !important;
+
+  .iconfont {
+    vertical-align: middle;
+
+    &:before {
+      padding-right: 0 !important;
+    }
+  }
+}
+
+// 刷新按钮
+.cds-btn-refresh {
+  .cds-btn-search();
+  color: #fff;
+  background-color: @cds-btn-refresh-color;
+  border-color: @cds-btn-refresh-color;
+
+  &:hover {
+    color: #fff;
+    background-color: tint(@cds-btn-refresh-color, 20%);
+    border-color: tint(@cds-btn-refresh-color, 20%);
+  }
+
+  &:active,
+  &.active {
+    color: #fff;
+    background-color: shade(@cds-btn-refresh-color, 5%);
+    border-color: tint(@cds-btn-refresh-color, 5%);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px fade(@cds-btn-refresh-color, 20%);
+  }
+}

@@ -1,0 +1,14 @@
+// 重置级联选择样式
+.ivu-cascader-menu {
+    max-width: 200px;
+}
+
+.ivu-cascader-menu:last-child {
+    max-width: 500px;
+}
+
+.ivu-cascader-menu:not(last-child) .ivu-cascader-menu-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

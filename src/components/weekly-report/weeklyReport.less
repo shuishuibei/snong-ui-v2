@@ -1,0 +1,53 @@
+.weekly-report-component {
+    .title {
+        position: relative;
+        padding-left: 8px;
+        height: 30px;
+        line-height: 30px;
+        font-weight: normal;
+        border-bottom: 1px solid #E4E8EB;
+        margin: 15px 0;
+        &:before {
+            position: absolute;
+            background-color: #ff0042;
+            width: 3px;
+            height: 18px;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            content: "";
+        }
+    }
+    .center {
+        border: 1px solid #DADBDF;
+        margin-bottom: 10px;
+        .center-title{
+            height: 50px;
+            line-height: 50px;
+            background-color: #E6F1F7;
+            padding-left: 8px;
+            font-size: 14px;
+            color: #64707C;
+            position: relative;
+        }
+    }
+    .study {
+        .study-title{
+            .deleteBgc {
+                background-color: #BFC7D2;
+            }
+        }
+        .study-bottom{
+            height: 120px;
+            padding-top: 10px;
+            span {
+                padding-left: 8px;
+                font-size: 14px;
+                color: #64707C;
+                display:inline-block;
+                vertical-align: top;
+            }
+        }
+        margin-bottom: 30px;
+    }
+}

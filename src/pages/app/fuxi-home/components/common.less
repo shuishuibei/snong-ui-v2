@@ -1,0 +1,32 @@
+/* 局部缓存动画 */
+    .full-icon-load {
+        animation: ani-full-icon-load 1s linear infinite;
+    }
+
+    @keyframes ani-full-icon-load {
+        from {
+            transform: rotate(0deg);
+        }
+        50% {
+            transform: rotate(180deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .cds-wrapper.home {
+        min-height: 250px;
+        .ivu-table-wrapper {
+            border: 0;
+        }
+        .ivu-table th, .ivu-table td {
+            border-bottom: 0;
+        }
+        .ivu-table:after {
+            width: 0;
+        }
+        .ivu-table:before {
+            height: 0;
+        }
+    }

@@ -1,0 +1,44 @@
+@cds-btn: {
+    width: 92px;
+    height: @cds-btn-height;
+    padding: 0;
+    text-align: center;
+};
+
+.dynamic-content {
+    .ivu-btn {
+        @cds-btn();
+        & > span {
+            vertical-align: middle;
+        }
+        .iconfont {
+            &:before {
+                padding-right: 4px;
+            }
+        }
+    }
+}
+// 模态框中的按钮
+.ivu-modal {
+    .ivu-btn {
+        @cds-btn();
+    }
+    .iconfont {
+        &:before {
+            padding-right: 4px;
+        }
+    }
+}
+
+// DatePicker中的按钮
+.ivu-picker-panel-body {
+    .ivu-picker-confirm {
+        .ivu-btn {
+            width: auto;
+            height: auto;
+        }
+        .ivu-btn-small {
+            padding: 1px 7px 2px;
+        }
+    }
+}

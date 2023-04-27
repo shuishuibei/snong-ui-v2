@@ -1,0 +1,50 @@
+.ivu-page.mini {
+  .ivu-page-prev,
+  .ivu-page-next,
+  .ivu-page-item {
+    min-width: 28px;
+    height: 28px;
+    line-height: 26px;
+    border: 1px solid #dddee1;
+    border-radius: 4px;
+    margin-right: 4px;
+    &:hover {
+      border: 1px solid #3399ff;
+    }
+  }
+
+  .ivu-select-small.ivu-select-single .ivu-select-selection .ivu-select-placeholder,
+  .ivu-select-small.ivu-select-single .ivu-select-selection .ivu-select-selected-value {
+    height: 26px;
+    line-height: 26px;
+  }
+
+  .ivu-select-small.ivu-select-single .ivu-select-selection {
+    height: 28px;
+  }
+
+  .ivu-page-item.ivu-page-item-active {
+    border: 1px solid @primary-color;
+  }
+
+  .ivu-page-options {
+    margin-left: 0;
+  }
+}
+
+.ivu-page {
+  font-size: 0;
+
+  & > li,
+  & > div {
+    font-size: @font-size-small;
+  }
+
+  .ivu-page-options {
+    margin-left: 4px;
+  }
+
+  .ivu-page-options-sizer {
+    margin-right: 0;
+  }
+}

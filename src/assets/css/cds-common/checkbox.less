@@ -1,0 +1,41 @@
+// 在用户管理页面，使用CheckBox组件，但样式形同Radio
+.cds-checkbox-radio {
+    .ivu-checkbox-inner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        position: relative;
+        top: 0;
+        left: 0;
+        background-color: #fff;
+        border: 1px solid #dddee1;
+        border-radius: 50%;
+        transition: all 0.2s ease-in-out;
+
+        &:after {
+            position: absolute;
+            width: 9px;
+            height: 9px;
+            left: 3px;
+            top: 3px;
+            border: 0;
+            border-radius: 50%;
+            background-color: @primary-color;
+        }
+    }
+
+    .ivu-checkbox-checked .ivu-checkbox-inner {
+        border-color: @primary-color;
+        &:after {
+            opacity: 1;
+        }
+    }
+    .ivu-checkbox-disabled .ivu-checkbox-inner {
+        border-color: #dddee1;
+        background-color: #f3f3f3;
+    }
+
+    .ivu-checkbox-disabled .ivu-checkbox-inner:after {
+        background-color: #f3f3f3;
+    }
+}
