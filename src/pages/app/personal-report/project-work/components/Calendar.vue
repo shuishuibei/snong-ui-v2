@@ -1,66 +1,54 @@
 <template>
-  <div>
-    <div class="month-calendar">
-      <div class="month-calendar-header">
-        <div class="month-calendar-header-nav">
-          <button class="month-calendar-header-nav-btn" @click="prevMonth">
-            Prev
-          </button>
-          <div class="month-calendar-header-nav-title">
-            {{ year }}年{{ month }}月
-          </div>
-          <button class="month-calendar-header-nav-btn" @click="nextMonth">
-            Next
-          </button>
+  <div class="month-calendar">
+    <div class="month-calendar-header">
+      <div class="month-calendar-header-nav">
+        <button class="month-calendar-header-nav-btn" @click="prevMonth">
+          Prev
+        </button>
+        <div class="month-calendar-header-nav-title">
+          {{ year }}年{{ month }}月
         </div>
+        <button class="month-calendar-header-nav-btn" @click="nextMonth">
+          Next
+        </button>
       </div>
-      <div class="month-calendar-body">
-        <div
-          class="month-calendar-row"
-          v-for="(week, index) in weeks"
-          :key="index"
-        >
-          <div
-            class="month-calendar-cell"
-            v-for="day in week"
-            :key="day.date"
-            :class="cellClass(day)"
-          >
-            <template v-if="!day.otherMonth">
-              <calendar-card
-                v-for="data in filteredFakeData(day.date)"
-                :key="data.day"
-                :year="data.year"
-                :month="data.month"
-                :day="data.day"
-                :completed="data.completed"
-                :dayState="data.dayState"
-                :weekState="data.weekState"
-                :monthState="data.monthState"
-                :quarterState="data.quarterState"
-                :yearState="data.yearState"
-                :tempState="data.tempState"
-              ></calendar-card>
-            </template>
-            <div
-              v-else
-              class="month-calendar-date"
-              @click="handleDateClick(day)"
-            >
-              <div class="month-calendar-date-header">
-                {{ day.week }} | {{ day.date }}
-              </div>
-              <div class="month-calendar-date-num">{{ day.date }}</div>
-            </div>
+    </div>
+    <div class="month-calendar-body">
+      <div
+        class="month-calendar-cell"
+        v-for="day in days"
+        :key="day.date + '-' + day.week"
+        :class="cellClass(day)"
+      >
+        <template v-if="!day.otherMonth">
+          <calendar-card
+            v-for="data in filteredFakeData(day.date)"
+            :key="data.day"
+            :year="data.year"
+            :month="data.month"
+            :day="data.day"
+            :completed="data.completed"
+            :dayState="data.dayState"
+            :weekState="data.weekState"
+            :monthState="data.monthState"
+            :quarterState="data.quarterState"
+            :yearState="data.yearState"
+            :tempState="data.tempState"
+          ></calendar-card>
+        </template>
+        <div v-else class="month-calendar-date" @click="handleDateClick(day)">
+          <div class="month-calendar-date-header">
+            {{ day.week }} | {{ day.date }}
           </div>
+          <div class="month-calendar-date-num">{{ day.date }}</div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import CalendarCard from "./CalendarCard.vue";
+
 export default {
   components: {
     "calendar-card": CalendarCard,
@@ -70,6 +58,7 @@ export default {
     const year = new Date().getFullYear();
     const month = new Date().getMonth() + 1;
     return {
+      days: [],
       year: today.getFullYear(),
       month: today.getMonth() + 1,
       weeks: [],
@@ -126,7 +115,7 @@ export default {
       } else {
         this.month -= 1;
       }
-      this.calculateWeeks();
+      this.calculateWeeks(this.year, this.month);
     },
     nextMonth() {
       if (this.month === 12) {
@@ -135,7 +124,7 @@ export default {
       } else {
         this.month += 1;
       }
-      this.calculateWeeks();
+      this.calculateWeeks(this.year, this.month);
     },
     handleDateClick(day) {
       if (!day.otherMonth) {
@@ -151,33 +140,26 @@ export default {
         ? "month-calendar-cell other-month"
         : "month-calendar-cell";
     },
-    calculateWeeks() {
-      const firstDayOfMonth = new Date(this.year, this.month - 1, 1); // 当月的第一天
-      const lastDayOfMonth = new Date(this.year, this.month, 0); // 当月的最后一天
+    calculateWeeks(year, month) {
+      const firstDayOfMonth = new Date(year, month - 1, 1); // 当月的第一天
+      const lastDayOfMonth = new Date(year, month, 0); // 当月的最后一天
       const firstDayOfGrid = new Date(firstDayOfMonth); // 日历方格中的第一天（可能是上月的日期）
       firstDayOfGrid.setDate(1 - (firstDayOfGrid.getDay() - 1 || 7)); // 日期移到上一个星期的周一
-      const weeks = [];
-      for (let i = 0; i < 6; i++) {
-        const week = [];
-        for (let j = 0; j < 7; j++) {
-          const date = new Date(firstDayOfGrid);
-          date.setDate(date.getDate() + i * 7 + j);
-          const day = {
-            week: j + 1,
-            date: date.getDate(),
-            otherMonth: date.getMonth() !== firstDayOfMonth.getMonth(),
-          };
-          week.push(day);
-        }
-        // 最后一个星期全部为下个月的日期不显示
-        if (week.some((day) => day.date <= 7 || day.otherMonth)) {
-          if (i === 5) {
-            break;
-          }
-        }
-        weeks.push(week);
+
+      const days = [];
+      let currentDay = new Date(firstDayOfGrid);
+
+      while (currentDay <= lastDayOfMonth || currentDay.getDay() !== 1) {
+        const day = {
+          week: currentDay.getDay() || 7,
+          date: currentDay.getDate(),
+          otherMonth: currentDay.getMonth() !== firstDayOfMonth.getMonth(),
+        };
+        days.push(day);
+        currentDay.setDate(currentDay.getDate() + 1);
       }
-      this.weeks = weeks;
+
+      this.days = days;
     },
   },
   computed: {
@@ -188,14 +170,16 @@ export default {
     },
   },
   mounted() {
-    this.calculateWeeks();
+    this.calculateWeeks(this.year, this.month);
   },
 };
 </script>
 
 <style lang="less" scoped>
 .month-calendar {
-  width: 700px;
+  width: 100%;
+  min-width: 700px;
+  padding: 0 5px;
 }
 
 .month-calendar-header {
@@ -227,17 +211,13 @@ export default {
 .month-calendar-body {
   display: flex;
   flex-wrap: wrap;
-}
-
-.month-calendar-row {
-  display: flex;
-  flex-wrap: nowrap;
+  justify-content: flex-start;
   margin: 5px 0;
 }
 
 .month-calendar-cell {
-  width: 135px;
-  height: 110px;
+  width: 145px;
+  height: 125px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -245,7 +225,7 @@ export default {
   font-size: 16px;
   text-align: center;
   border: 1px solid #ccc;
-  margin: 0 5px;
+  margin: 0 5px 5px 5px;
 }
 
 .month-calendar-cell.today {

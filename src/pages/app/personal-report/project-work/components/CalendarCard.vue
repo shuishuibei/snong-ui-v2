@@ -1,8 +1,8 @@
 <!--
  * @Author: cfw2157 yz.caiyijun@h3c.com
  * @Date: 2023-04-28 14:13:46
- * @LastEditors:  
- * @LastEditTime: 2023-04-28 15:43:05
+ * @LastEditors: cfw2157 yz.caiyijun@h3c.com
+ * @LastEditTime: 2023-04-28 17:13:15
  * @FilePath: \snong-ui-v2\src\pages\app\personal-report\project-work\components\CalendarCard.vue
  * @Description: 日历组件子组件——日期卡片组件
 -->
@@ -109,7 +109,7 @@ export default {
           done: 0,
         };
       },
-      required: true,
+      required: false,
     },
     // 所在周状态，分总任务total和已完成任务done
     weekState: {
@@ -120,7 +120,7 @@ export default {
           done: 0,
         };
       },
-      required: true,
+      required: false,
     },
     // 所在月状态，分总任务total和已完成任务done
     monthState: {
@@ -223,9 +223,11 @@ export default {
 
 <style lang="less" scoped>
 .calendar-card {
-  width: 145px;
-  height: 125px;
-  border: 1px solid #ccc;
+  width: 100%;
+  height: 100%;
+  // width: 145px;
+  // height: 125px;
+  // border: 1px solid #ccc;
   & > div {
     width: 100%;
     height: 100%;
