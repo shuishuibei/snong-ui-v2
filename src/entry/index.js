@@ -2,8 +2,8 @@
  * @Description
  * @Author ys1983/张睿博
  * @Date 2019-07-22 16:46:41
- * @LastEditors ys1983/张睿博
- * @LastEditTime 2019-10-11 11:55:30
+ * @LastEditors: cfw2157 yz.caiyijun@h3c.com
+ * @LastEditTime: 2023-04-27 17:38:27
  */
 import Vue from 'vue';
 import Vuex from 'vuex';
@@ -257,6 +257,46 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+
+// const isSpecialRoute = (name) => {
+//   const specialRoutes = ['join', 'error-400', 'error-401', 'error-403', 'error-404'];
+//   return specialRoutes.includes(name);
+// };
+
+// const isAuthenticated = async () => {
+//   let time = new Date().getTime();
+//   const response = await axiosIns.get('user/isLogin' + '?time=' + time);
+//   return response.data.status;
+// };
+
+// router.beforeEach(async (to, from, next) => {
+//   to.meta.title && Utils.title(to.meta.title);
+
+//   if (isSpecialRoute(to.name)) {
+//     next();
+//   } else {
+//     if (true) {
+//       if (to.name !== null) {
+//         if (to.name === 'login') {
+//           next({ name: 'home' });
+//         } else {
+//           authCheck(to.name, next);
+//         }
+//       } else {
+//         next({
+//           replace: true,
+//           name: 'error-404'
+//         });
+//       }
+//     } else {
+//       if (to.name !== 'login') {
+//         next({ name: 'login' });
+//       } else {
+//         next();
+//       }
+//     }
+//   }
+// });
 
 //开发模式下启用严格模式,生产环境关闭严格模式(影响性能)
 storeConfig.strict = process.env.NODE_ENV !== 'production';
