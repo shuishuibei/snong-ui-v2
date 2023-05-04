@@ -5,7 +5,7 @@
     </div>
     <div class="summer-content">
       <span :class="{ 'finished-red': finished < total }">{{ finished }}</span>
-      /{{ total }}
+      &nbsp;/&nbsp;{{ total }}
     </div>
   </div>
 </template>

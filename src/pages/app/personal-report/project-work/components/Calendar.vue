@@ -2,7 +2,7 @@
   <div class="calendar">
     <div class="summary">
       <card
-        v-for="(item, index) of fakeSummary"
+        v-for="(item, index) of summerData"
         :key="index"
         :timePeriod="item.timePeriod"
         :finished="item.finished"
@@ -21,14 +21,14 @@
     <div class="calendar-body">
       <div
         class="calendar-cell"
-        v-for="day in days"
-        :key="day.date + '-' + day.week"
+        v-for="(day, index) in days"
+        :key="index"
         :class="cellClass(day)"
       >
         <template v-if="!day.otherMonth">
           <calendar-card
-            @click="handleDateClick(day)"
-            v-for="data in filteredFakeData(day.date)"
+            @click.native="handleDateClick(day)"
+            v-for="data in filteredCalendarData(day.date)"
             :key="data.day"
             :year="data.year"
             :month="data.month"
@@ -61,52 +61,39 @@ export default {
   data() {
     const today = new Date();
     const year = new Date().getFullYear();
-    const month = new Date().getMonth() + 1;
     const years = Array.from({ length: 11 }, (_, i) => year - 5 + i); // 显示从当前年份前5年到后5年的年份
     const months = Array.from({ length: 12 }, (_, i) => i + 1); // 生成1-12月的数组
     return {
       days: [],
-      fakeSummary: [
-        {
-          timePeriod: "日",
-          finished: 191,
-          total: 225,
-        },
-        {
-          timePeriod: "周",
-          finished: 13,
-          total: 15,
-        },
-        {
-          timePeriod: "月",
-          finished: 1,
-          total: 1,
-        },
-        {
-          timePeriod: "季度",
-          finished: 1,
-          total: 1,
-        },
-        {
-          timePeriod: "年",
-          finished: 0,
-          total: 0,
-        },
-        {
-          timePeriod: "需",
-          finished: 1,
-          total: 1,
-        },
-      ],
+      actualDate: {
+        day: [192, 225],
+        week: [13, 15],
+        month: [1, 1],
+        quarter: [1, 1],
+        year: [0, 0],
+        temp: [1, 1],
+      },
+      summerData: [],
+      calendarData: [],
       year: today.getFullYear(),
       month: today.getMonth() + 1,
       weeks: [],
-      fakeData: this.generateFakeData(year, month),
       years: years,
       months: months,
     };
   },
   methods: {
+    convertData(data) {
+      const result = [
+        { timePeriod: "日", finished: data.day[0], total: data.day[1] },
+        { timePeriod: "周", finished: data.week[0], total: data.week[1] },
+        { timePeriod: "月", finished: data.month[0], total: data.month[1] },
+        { timePeriod: "季度", finished: data.quarter[0], total: data.quarter[1] },
+        { timePeriod: "年", finished: data.year[0], total: data.year[1] },
+        { timePeriod: "需", finished: data.temp[0], total: data.temp[1] },
+      ];
+      return result;
+    },
     handleYearMonthChange() {
       this.calculateWeeks(this.year, this.month);
     },
@@ -123,7 +110,7 @@ export default {
           day: day,
           year: year,
           month: month,
-          completed: false,
+          completed: true,
           dayState: {
             total: total,
             done: done,
@@ -137,15 +124,15 @@ export default {
             done: done,
           },
           quarterState: {
-            total: null,
+            total: total,
             done: done,
           },
           yearState: {
-            total: null,
+            total: total,
             done: done,
           },
           tempState: {
-            total: null,
+            total: total,
             done: done,
           },
         });
@@ -153,9 +140,7 @@ export default {
       return fakeData;
     },
     handleDateClick(day) {
-      if (!day.otherMonth) {
-        console.log(`Clicked on ${this.year}-${this.month}-${day.date}`);
-      }
+      console.log(`Clicked on ${this.year}-${this.month}-${day.date}`);
     },
     cellClass(day) {
       // 当天的背景色为浅绿色
@@ -172,28 +157,29 @@ export default {
       const firstDayOfMonth = new Date(year, month - 1, 1); // 当月的第一天
       const lastDayOfMonth = new Date(year, month, 0); // 当月的最后一天
       const firstDayOfGrid = new Date(firstDayOfMonth); // 日历方格中的第一天（可能是上月的日期）
-      firstDayOfGrid.setDate(1 - (firstDayOfGrid.getDay() - 1 || 7)); // 日期移到上一个星期的周一
-
-      const days = [];
+      // 如果当月的第一天不是周一，将 firstDayOfGrid 设置为上一个星期的周一
+      if (firstDayOfMonth.getDay() !== 1) {
+        firstDayOfGrid.setDate(1 - (firstDayOfGrid.getDay() - 1 || 7)); // 日期移到上一个星期的周一
+      }
+      this.days = [];
       let currentDay = new Date(firstDayOfGrid);
-
       while (currentDay <= lastDayOfMonth || currentDay.getDay() !== 1) {
         const day = {
           week: this.getWeekDay(currentDay),
           date: currentDay.getDate(),
+          year: currentDay.getFullYear(), // 添加年份信息
+          month: currentDay.getMonth() + 1, // 添加月份信息，注意要加 1
           otherMonth: currentDay.getMonth() !== firstDayOfMonth.getMonth(),
         };
-        days.push(day);
+        this.days.push(day);
         currentDay.setDate(currentDay.getDate() + 1);
       }
-
-      this.days = days;
     },
   },
   computed: {
-    filteredFakeData() {
+    filteredCalendarData() {
       return (day) => {
-        return this.fakeData.filter((data) => data.day === day);
+        return this.calendarData.filter((data) => data.day === day);
       };
     },
   },
@@ -205,8 +191,11 @@ export default {
       this.handleYearMonthChange();
     },
   },
-
   mounted() {
+    // 第一行汇总数据，后期通过接口获取实际数据，通过convertData方法转换后赋值给summerData
+    this.summerData = this.convertData(this.actualDate); 
+    // 日历里展示的数据，后期通过接口获取实际数据，赋值给calendarData
+    this.calendarData = this.generateFakeData(this.year, this.month);
     this.calculateWeeks(this.year, this.month);
   },
 };

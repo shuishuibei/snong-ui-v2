@@ -155,6 +155,7 @@ export default {
 
 <style lang="less" scoped>
 .calendar-card {
+  cursor: pointer;
   width: 100%;
   height: 100%;
   & > div {
