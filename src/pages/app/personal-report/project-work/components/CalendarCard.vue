@@ -37,8 +37,8 @@
 <script>
 function defaultState() {
   return {
-    total: 0,
-    done: 0,
+    total: null,
+    done: null,
   };
 }
 export default {

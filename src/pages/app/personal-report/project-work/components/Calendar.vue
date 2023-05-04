@@ -27,6 +27,7 @@
       >
         <template v-if="!day.otherMonth">
           <calendar-card
+            @click="handleDateClick(day)"
             v-for="data in filteredFakeData(day.date)"
             :key="data.day"
             :year="data.year"
@@ -41,11 +42,8 @@
             :tempState="data.tempState"
           ></calendar-card>
         </template>
-        <div v-else class="calendar-date" @click="handleDateClick(day)">
-          <div class="calendar-date-header">
-            {{ day.week }} | {{ day.date }}
-          </div>
-          <div class="calendar-date-num">{{ day.date }}</div>
+        <div v-else class="calendar-date">
+          {{ day.date }} | {{ day.week }}
         </div>
       </div>
     </div>
@@ -166,6 +164,10 @@ export default {
       }
       return day.otherMonth ? "calendar-cell other-month" : "calendar-cell";
     },
+    getWeekDay(date) {
+      const formatter = new Intl.DateTimeFormat("zh-CN", { weekday: "short" });
+      return formatter.format(date);
+    },
     calculateWeeks(year, month) {
       const firstDayOfMonth = new Date(year, month - 1, 1); // 当月的第一天
       const lastDayOfMonth = new Date(year, month, 0); // 当月的最后一天
@@ -177,7 +179,7 @@ export default {
 
       while (currentDay <= lastDayOfMonth || currentDay.getDay() !== 1) {
         const day = {
-          week: currentDay.getDay() || 7,
+          week: this.getWeekDay(currentDay),
           date: currentDay.getDate(),
           otherMonth: currentDay.getMonth() !== firstDayOfMonth.getMonth(),
         };
@@ -214,7 +216,6 @@ export default {
 .calendar {
   width: 100%;
   min-width: 700px;
-  padding: 0 5px;
 }
 .summary {
   display: flex;
@@ -245,14 +246,12 @@ export default {
 .calendar-cell {
   width: 145px;
   height: 125px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   font-size: 16px;
   text-align: center;
   border: 1px solid #ccc;
-  margin: 0 5px 5px 5px;
+  padding: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
 .calendar-cell.today {
   background-color: #e2f3d9;
@@ -261,13 +260,11 @@ export default {
   color: #ccc;
 }
 .calendar-date {
-  cursor: pointer;
-}
-.calendar-date-header {
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-.calendar-date-num {
-  font-size: 30px;
+  width: 100%;
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 16px;
+  padding: 5px 0;
+  margin-left: -20px;
 }
 </style>
