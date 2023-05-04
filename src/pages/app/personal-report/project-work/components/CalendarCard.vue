@@ -2,7 +2,7 @@
  * @Author: cfw2157 yz.caiyijun@h3c.com
  * @Date: 2023-04-28 14:13:46
  * @LastEditors: cfw2157 yz.caiyijun@h3c.com
- * @LastEditTime: 2023-04-28 17:13:15
+ * @LastEditTime: 2023-05-04 14:49:51
  * @FilePath: \snong-ui-v2\src\pages\app\personal-report\project-work\components\CalendarCard.vue
  * @Description: 日历组件子组件——日期卡片组件
 -->
@@ -18,60 +18,16 @@
       <div class="week-day">
         {{ `${day} | ${getWeekDay(year, month, day)}` }}
       </div>
-      <div class="state-container">
-        <div class="state" v-if="dayState.total !== null">
-          <span class="s1">日</span>
-          <span class="s2">
-            <span :class="{ warn: dayState.done !== dayState.total }">{{
-              dayState.done
-            }}</span
-            >/{{ dayState.total }}
+      <div
+        class="state-container"
+        :class="{ 'two-columns': sortedStates.length > 3, 'one-columns': sortedStates.length <= 3 }"
+      >
+        <div class="state" v-for="item in sortedStates" :key="item.label">
+          <span class="s1">{{ item.label }}</span>
+          <span :class="{ 'warn': item.state.done !== item.state.total, 's2': true }">
+            {{ item.state.done }}
           </span>
-        </div>
-        <div class="state" v-if="weekState.total !== null">
-          <span class="s1">周</span>
-          <span class="s2">
-            <span :class="{ warn: weekState.done !== weekState.total }">{{
-              weekState.done
-            }}</span
-            >/{{ weekState.total }}
-          </span>
-        </div>
-        <div class="state" v-if="monthState.total !== null">
-          <span class="s1">月</span>
-          <span class="s2">
-            <span :class="{ warn: monthState.done !== monthState.total }">{{
-              monthState.done
-            }}</span
-            >/{{ monthState.total }}
-          </span>
-        </div>
-        <div class="state" v-if="quarterState.total !== null">
-          <span class="s1">季</span>
-          <span class="s2">
-            <span :class="{ warn: quarterState.done !== quarterState.total }">{{
-              quarterState.done
-            }}</span
-            >/{{ quarterState.total }}
-          </span>
-        </div>
-        <div class="state" v-if="yearState.total !== null">
-          <span class="s1">年</span>
-          <span class="s2">
-            <span :class="{ warn: yearState.done !== yearState.total }">{{
-              yearState.done
-            }}</span
-            >/{{ yearState.total }}
-          </span>
-        </div>
-        <div class="state" v-if="tempState.total !== null">
-          <span class="s1">需</span>
-          <span class="s2">
-            <span :class="{ warn: yearState.done !== yearState.total }">{{
-              yearState.done
-            }}</span
-            >/{{ yearState.total }}
-          </span>
+          <span class="s3">&nbsp;/&nbsp;{{item.state.total }}</span>
         </div>
       </div>
     </div>
@@ -79,91 +35,68 @@
 </template>
 
 <script>
+function defaultState() {
+  return {
+    total: 0,
+    done: 0,
+  };
+}
 export default {
   props: {
     // 年
     year: {
-      type: Number | String,
+      type: [Number, String],
       required: true,
     },
     // 月
     month: {
-      type: Number | String,
+      type: [Number, String],
       required: true,
     },
     // 日
     day: {
-      type: Number | String,
+      type: [Number, String],
       required: true,
     },
     completed: {
-        type: Boolean,
-        required: true,
+      type: Boolean,
+      required: true,
     },
+    // 数据展示优先级：日 周  月  季 年 需
     // 当日状态，分总任务total和已完成任务done
     dayState: {
       type: Object,
-      default: () => {
-        return {
-          total: 0,
-          done: 0,
-        };
-      },
+      default: defaultState,
       required: false,
     },
     // 所在周状态，分总任务total和已完成任务done
     weekState: {
       type: Object,
-      default: () => {
-        return {
-          total: 0,
-          done: 0,
-        };
-      },
+      default: defaultState,
       required: false,
     },
     // 所在月状态，分总任务total和已完成任务done
     monthState: {
       type: Object,
-      default: () => {
-        return {
-          total: 0,
-          done: 0,
-        };
-      },
+      default: defaultState,
       required: false,
     },
     // 所在季度状态，分总任务total和已完成任务done
     quarterState: {
       type: Object,
-      default: () => {
-        return {
-          total: 0,
-          done: 0,
-        };
-      },
+      default: defaultState,
       required: false,
     },
     // 所在年状态，分总任务total和已完成任务done
     yearState: {
       type: Object,
-      default: () => {
-        return {
-          total: 0,
-          done: 0,
-        };
-      },
+      default: defaultState,
       required: false,
     },
     // 需，分总任务total和已完成任务done
     tempState: {
       type: Object,
-      default: () => {
-        return {
-          total: 0,
-          done: 0,
-        };
-      },
+      default: defaultState,
       required: false,
     },
     callback: {
@@ -177,23 +110,22 @@ export default {
   methods: {
     getWeekDay(year, month, day) {
       const date = new Date(year, month - 1, day);
-      const daysOfWeek = [
-        "周日",
-        "周一",
-        "周二",
-        "周三",
-        "周四",
-        "周五",
-        "周六",
-      ];
-      const dayofWeek = daysOfWeek[date.getDay()];
-      return dayofWeek;
+      const formatter = new Intl.DateTimeFormat("zh-CN", { weekday: "short" });
+      return formatter.format(date);
     },
   },
   computed: {
-    // completed() {
-    //   return this.dayState.done === this.dayState.total;
-    // },
+    sortedStates() {
+      const stateList = [
+        { label: "日", state: this.dayState },
+        { label: "周", state: this.weekState },
+        { label: "月", state: this.monthState },
+        { label: "季", state: this.quarterState },
+        { label: "年", state: this.yearState },
+        { label: "需", state: this.tempState },
+      ];
+      return stateList.filter(({ state }) => state.total !== null).slice(0, 6);
+    },
     // 大于今天的日期的，
     noTask() {
       return this.dayState.done == null && this.dayState.total == null;
@@ -225,13 +157,10 @@ export default {
 .calendar-card {
   width: 100%;
   height: 100%;
-  // width: 145px;
-  // height: 125px;
-  // border: 1px solid #ccc;
   & > div {
     width: 100%;
     height: 100%;
-    padding: 5px 15px;
+    padding: 5px;
   }
 }
 .bg-green {
@@ -249,24 +178,37 @@ export default {
   font-size: 16px;
   line-height: 16px;
   padding: 5px 0;
+  margin-left: -20px;
 }
 .state-container {
   width: 100%;
   height: 100px;
-  overflow-y: auto;
-  direction: rtl;
+  overflow: hidden;
+  direction: ltr;
+  height: calc(100% - 26px);
+}
+
+.state-container.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 4px;
+  font-size: 12px;
+}
+
+.state-container.one-columns {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
 }
 
 .warn {
   color: #ed1c24;
 }
 .state {
-    float: left;
-  font-size: 15px;
-  line-height: 15px;
-  .s1 {
-    padding-left: 36px;
-  }
+  display: flex;
+  align-items: center;
   .s2 {
     padding-left: 10px;
     font-weight: 700;

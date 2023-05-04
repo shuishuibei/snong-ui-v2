@@ -1,21 +1,26 @@
 <template>
-  <div class="month-calendar">
-    <div class="month-calendar-header">
-      <div class="month-calendar-header-nav">
-        <button class="month-calendar-header-nav-btn" @click="prevMonth">
-          Prev
-        </button>
-        <div class="month-calendar-header-nav-title">
-          {{ year }}年{{ month }}月
-        </div>
-        <button class="month-calendar-header-nav-btn" @click="nextMonth">
-          Next
-        </button>
-      </div>
+  <div class="calendar">
+    <div class="summary">
+      <card
+        v-for="(item, index) of fakeSummary"
+        :key="index"
+        :timePeriod="item.timePeriod"
+        :finished="item.finished"
+        :total="item.total"
+      ></card>
     </div>
-    <div class="month-calendar-body">
+    <div class="calendar-header">
+      <i-select class="calendar-header-select" v-model="year">
+        <i-option v-for="y in years" :key="y" :value="y">{{ y }}&nbsp;年</i-option>
+      </i-select>
+      <i-select class="calendar-header-select" v-model="month">
+        <i-option v-for="m in months" :key="m" :value="m">{{ `${m}`.padStart(2, '0') }}&nbsp;月</i-option>
+      </i-select>
+      <i-button type="primary" class="calendar-header-button">导出报表</i-button>
+    </div>
+    <div class="calendar-body">
       <div
-        class="month-calendar-cell"
+        class="calendar-cell"
         v-for="day in days"
         :key="day.date + '-' + day.week"
         :class="cellClass(day)"
@@ -36,36 +41,77 @@
             :tempState="data.tempState"
           ></calendar-card>
         </template>
-        <div v-else class="month-calendar-date" @click="handleDateClick(day)">
-          <div class="month-calendar-date-header">
+        <div v-else class="calendar-date" @click="handleDateClick(day)">
+          <div class="calendar-date-header">
             {{ day.week }} | {{ day.date }}
           </div>
-          <div class="month-calendar-date-num">{{ day.date }}</div>
+          <div class="calendar-date-num">{{ day.date }}</div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import Card from "./Card.vue";
 import CalendarCard from "./CalendarCard.vue";
 
 export default {
   components: {
-    "calendar-card": CalendarCard,
+    Card,
+    CalendarCard,
   },
   data() {
     const today = new Date();
     const year = new Date().getFullYear();
     const month = new Date().getMonth() + 1;
+    const years = Array.from({ length: 11 }, (_, i) => year - 5 + i); // 显示从当前年份前5年到后5年的年份
+    const months = Array.from({ length: 12 }, (_, i) => i + 1); // 生成1-12月的数组
     return {
       days: [],
+      fakeSummary: [
+        {
+          timePeriod: "日",
+          finished: 191,
+          total: 225,
+        },
+        {
+          timePeriod: "周",
+          finished: 13,
+          total: 15,
+        },
+        {
+          timePeriod: "月",
+          finished: 1,
+          total: 1,
+        },
+        {
+          timePeriod: "季度",
+          finished: 1,
+          total: 1,
+        },
+        {
+          timePeriod: "年",
+          finished: 0,
+          total: 0,
+        },
+        {
+          timePeriod: "需",
+          finished: 1,
+          total: 1,
+        },
+      ],
       year: today.getFullYear(),
       month: today.getMonth() + 1,
       weeks: [],
       fakeData: this.generateFakeData(year, month),
+      years: years,
+      months: months,
     };
   },
   methods: {
+    handleYearMonthChange() {
+      this.calculateWeeks(this.year, this.month);
+    },
     // 创建假数据
     generateFakeData(year, month) {
       const daysInMonth = new Date(year, month, 0).getDate();
@@ -93,38 +139,20 @@ export default {
             done: done,
           },
           quarterState: {
-            total: total,
+            total: null,
             done: done,
           },
           yearState: {
-            total: total,
+            total: null,
             done: done,
           },
           tempState: {
-            total: total,
+            total: null,
             done: done,
           },
         });
       }
       return fakeData;
-    },
-    prevMonth() {
-      if (this.month === 1) {
-        this.year -= 1;
-        this.month = 12;
-      } else {
-        this.month -= 1;
-      }
-      this.calculateWeeks(this.year, this.month);
-    },
-    nextMonth() {
-      if (this.month === 12) {
-        this.year += 1;
-        this.month = 1;
-      } else {
-        this.month += 1;
-      }
-      this.calculateWeeks(this.year, this.month);
     },
     handleDateClick(day) {
       if (!day.otherMonth) {
@@ -134,11 +162,9 @@ export default {
     cellClass(day) {
       // 当天的背景色为浅绿色
       if (!day.otherMonth && day.date === new Date().getDate()) {
-        return "month-calendar-cell today";
+        return "calendar-cell today";
       }
-      return day.otherMonth
-        ? "month-calendar-cell other-month"
-        : "month-calendar-cell";
+      return day.otherMonth ? "calendar-cell other-month" : "calendar-cell";
     },
     calculateWeeks(year, month) {
       const firstDayOfMonth = new Date(year, month - 1, 1); // 当月的第一天
@@ -169,6 +195,15 @@ export default {
       };
     },
   },
+  watch: {
+    year() {
+      this.handleYearMonthChange();
+    },
+    month() {
+      this.handleYearMonthChange();
+    },
+  },
+
   mounted() {
     this.calculateWeeks(this.year, this.month);
   },
@@ -176,46 +211,38 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.month-calendar {
+.calendar {
   width: 100%;
   min-width: 700px;
   padding: 0 5px;
 }
-
-.month-calendar-header {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.month-calendar-header-nav {
+.summary {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
 }
 
-.month-calendar-header-nav-btn {
-  background: none;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  font-size: 14px;
-  padding: 5px 10px;
-  margin: 5px;
-  cursor: pointer;
+.calendar-header {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+  .calendar-header-select {
+    width: 80px;
+    height: 35px;
+    margin: 5px;
+  }
+  .calendar-header-button {
+    margin: 5px;
+  }
 }
 
-.month-calendar-header-nav-title {
-  font-size: 16px;
-  margin: 0 10px;
-}
-
-.month-calendar-body {
+.calendar-body {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
   margin: 5px 0;
 }
-
-.month-calendar-cell {
+.calendar-cell {
   width: 145px;
   height: 125px;
   display: flex;
@@ -227,25 +254,20 @@ export default {
   border: 1px solid #ccc;
   margin: 0 5px 5px 5px;
 }
-
-.month-calendar-cell.today {
+.calendar-cell.today {
   background-color: #e2f3d9;
 }
-
-.month-calendar-cell.other-month {
+.calendar-cell.other-month {
   color: #ccc;
 }
-
-.month-calendar-date {
+.calendar-date {
   cursor: pointer;
 }
-
-.month-calendar-date-header {
+.calendar-date-header {
   font-size: 14px;
   margin-bottom: 10px;
 }
-
-.month-calendar-date-num {
+.calendar-date-num {
   font-size: 30px;
 }
 </style>
