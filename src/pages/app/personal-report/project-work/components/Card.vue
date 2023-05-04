@@ -24,8 +24,8 @@ export default {
 .summer {
   width: 200px;
   height: 70px;
-  background-color: #f9f9f9;
-  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #fff;
   padding: 10px;
   margin: 5px;
 }
