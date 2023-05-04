@@ -23,12 +23,6 @@ export default {
             component: () =>
               import( /*webpackChunkName: "project-work"*/ '@/pages/app/personal-report/project-work/ProjectWork.vue')
           },
-          {
-            name: 'work-list', // 项目工作清单确认页面
-            path: 'work-list',
-            component: () =>
-              import( /*webpackChunkName: "work-list"*/ '@/pages/app/personal-report/work-list/WorkList.vue')
-          },
         ]
       },
       {
