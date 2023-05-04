@@ -140,6 +140,9 @@ export default {
       return fakeData;
     },
     handleDateClick(day) {
+      this.$router.push({
+        path: '/work-list'
+      })
       console.log(`Clicked on ${this.year}-${this.month}-${day.date}`);
     },
     cellClass(day) {
