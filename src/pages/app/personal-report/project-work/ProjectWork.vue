@@ -1,7 +1,10 @@
 <template>
   <div class="task-manage">
     <!-- 顶部 -->
-    <div class="content-wrapper">
+    <div class="work-list" v-if="dateClickFlag">
+      <work-list></work-list>
+    </div>
+    <div class="content-wrapper" v-else>
       <div class="resourceTree-wrapper cds-padding-14">
         <div class="resource-search">
           <i-input
@@ -32,10 +35,11 @@
       </div>
       <div class="detail-wrapper">
         <div class="detail-bottom cds-padding-14">
-          <calendar></calendar>
+          <calendar @dateClick="dateClick"></calendar>
         </div>
       </div>
     </div>
+    
   </div>
 </template>
 
@@ -43,45 +47,24 @@
 import FTree from "@/components/h3c-tree/index";
 import CalendarCard from "./components/CalendarCard.vue";
 import Calendar from "./components/Calendar.vue";
+import WorkList from "./components/WorkList.vue";
 
 export default {
   name: "ProjectWork",
   components: {
     "h3c-tree": FTree,
-    "calendar-card": CalendarCard,
-    calendar: Calendar,
+    CalendarCard,
+    Calendar,
+    WorkList,
   },
   data() {
     return {
-      dayState: {
-        total: 10,
-        done: 8,
-      },
-      weekState: {
-        total: 10,
-        done: 3,
-      },
-      monthState: {
-        total: 10,
-        done: 3,
-      },
-      quarterState: {
-        total: 10,
-        done: 3,
-      },
-      yearState: {
-        total: 10,
-        done: 3,
-      },
-      tempState: {
-        total: 10,
-        done: 3,
-      },
       inspectionDate: new Date().toISOString().slice(0, 10),
       resourceTreeArr: [], // 资源列表
       searchValue: "", // 资源列表实际搜索值
       inputName: "", // 资源列表所填搜索值
       projectName: "", // 资源列表当前选中项
+      dateClickFlag: false,
     };
   },
   computed: {
@@ -93,6 +76,10 @@ export default {
     },
   },
   methods: {
+    dateClick(params) {
+      let { year, month, date } = params;
+      this.dateClickFlag = true;
+    },
     // 更改日期的格式
     formDate(data, formatType) {
       let type = Object.prototype.toString.call(data);

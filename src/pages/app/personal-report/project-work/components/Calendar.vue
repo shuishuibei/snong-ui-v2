@@ -95,6 +95,7 @@ export default {
       return result;
     },
     handleYearMonthChange() {
+      this.calendarData = this.generateFakeData(this.year, this.month);
       this.calculateWeeks(this.year, this.month);
     },
     // 创建假数据
@@ -140,10 +141,12 @@ export default {
       return fakeData;
     },
     handleDateClick(day) {
-      this.$router.push({
-        path: '/work-list'
-      })
-      console.log(`Clicked on ${this.year}-${this.month}-${day.date}`);
+      this.$emit('dateClick', {
+        year: this.year,
+        month: this.month,
+        date: day.date
+      });
+      // console.log(`Clicked on ${this.year}-${this.month}-${day.date}`);
     },
     cellClass(day) {
       // 当天的背景色为浅绿色
@@ -174,10 +177,33 @@ export default {
           month: currentDay.getMonth() + 1, // 添加月份信息，注意要加 1
           otherMonth: currentDay.getMonth() !== firstDayOfMonth.getMonth(),
         };
+        console.log(day)
         this.days.push(day);
         currentDay.setDate(currentDay.getDate() + 1);
       }
     },
+    // calculateWeeks(year, month) {
+    //   const firstDayOfMonth = new Date(year, month - 1, 1); // 当月的第一天
+    //   const lastDayOfMonth = new Date(year, month, 0); // 当月的最后一天
+    //   const firstDayOfGrid = new Date(firstDayOfMonth); // 日历方格中的第一天（可能是上月的日期）
+    //   // 如果当月的第一天不是周一，将 firstDayOfGrid 设置为上一个星期的周一
+    //   if (firstDayOfMonth.getDay() !== 1) {
+    //     firstDayOfGrid.setDate(1 - (firstDayOfGrid.getDay() - 1 || 7)); // 日期移到上一个星期的周一
+    //   }
+    //   this.days = [];
+    //   let currentDay = new Date(firstDayOfGrid);
+    //   while (currentDay <= lastDayOfMonth || (currentDay.getDay() !== 1 && currentDay.getDay() !== 7)) {
+    //     const day = {
+    //       week: this.getWeekDay(currentDay),
+    //       date: currentDay.getDate(),
+    //       year: currentDay.getFullYear(), // 添加年份信息
+    //       month: currentDay.getMonth() + 1, // 添加月份信息，注意要加 1
+    //       otherMonth: currentDay.getMonth() !== firstDayOfMonth.getMonth(),
+    //     };
+    //     this.days.push(day);
+    //     currentDay.setDate(currentDay.getDate() + 1);
+    //   }
+    // },
   },
   computed: {
     filteredCalendarData() {
