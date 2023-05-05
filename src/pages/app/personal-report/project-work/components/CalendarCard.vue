@@ -60,6 +60,7 @@ export default {
     },
     completed: {
       type: Boolean,
+      default: true,
       required: true,
     },
     // 数据展示优先级：日 周  月  季 年 需

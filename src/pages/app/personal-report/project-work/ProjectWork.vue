@@ -35,7 +35,7 @@
       </div>
       <div class="detail-wrapper">
         <div class="detail-bottom cds-padding-14">
-          <calendar @dateClick="dateClick"></calendar>
+          <calendar @dateClick="dateClick" :projectId="projectId"></calendar>
         </div>
       </div>
     </div>
@@ -64,6 +64,7 @@ export default {
       searchValue: "", // 资源列表实际搜索值
       inputName: "", // 资源列表所填搜索值
       projectName: "", // 资源列表当前选中项
+      projectId: "", // 资源列表当前选中项的id
       dateClickFlag: false,
     };
   },
@@ -126,6 +127,9 @@ export default {
       this.projectName = this.resourceTreeArr[0]
         ? this.resourceTreeArr[0].title
         : "";
+      this.projectId = this.resourceTreeArr[0]
+        ? this.resourceTreeArr[0].title
+        : "";
     },
     // 获取列表数据
     getResourceList() {
@@ -138,6 +142,7 @@ export default {
     // 列表选中项改变时触发
     resourceChange(list) {
       this.projectName = list[0].title;
+      this.projectId = list[0].id;
     },
     // 查询列表数据
     searchResource() {

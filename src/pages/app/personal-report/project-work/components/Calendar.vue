@@ -58,6 +58,12 @@ export default {
     Card,
     CalendarCard,
   },
+  props: {
+    projectId: {
+      type: String,
+      required: true,      
+    }
+  },
   data() {
     const today = new Date();
     const year = new Date().getFullYear();
@@ -83,62 +89,67 @@ export default {
     };
   },
   methods: {
+     // 获取日历页面日期数据
+     getCalendarData() {
+      this.$http.get(`/projectWorkState/month?projectId=${this.projectId}&yearMonth=${this.yearMonth}`).then(({ data }) => {
+        if (data.status) {
+          this.calendarData = data.data;
+          this.generateFakeData(this.year, this.month);
+        }
+      });
+    },
+    // 获取日历页面统计数据
+    getSummerData() {
+      this.$http.get(`/projectWorkState/month/count?projectId=${this.projectId}&yearMonth=${this.yearMonth}`).then(({ data }) => {
+        if (data.status) {
+          this.summerData = this.convertData(data.data);
+        }
+      });
+    },
     convertData(data) {
       const result = [
-        { timePeriod: "日", finished: data.day[0], total: data.day[1] },
-        { timePeriod: "周", finished: data.week[0], total: data.week[1] },
-        { timePeriod: "月", finished: data.month[0], total: data.month[1] },
-        { timePeriod: "季度", finished: data.quarter[0], total: data.quarter[1] },
-        { timePeriod: "年", finished: data.year[0], total: data.year[1] },
-        { timePeriod: "需", finished: data.temp[0], total: data.temp[1] },
+        { timePeriod: "日", finished: data.day?.[0] || 0, total: data.day?.[1] | 0 },
+        { timePeriod: "周", finished: data.week?.[0] ?? 0, total: data.week?.[1] ?? 0 },
+        { timePeriod: "月", finished: data.month?.[0] ?? 0, total: data.month?.[1] ?? 0 },
+        { timePeriod: "季度", finished: data.quarter?.[0] ?? 0, total: data.quarter?.[1] ?? 0 },
+        { timePeriod: "年", finished: data.year?.[0] ?? 0, total: data.year?.[1] ?? 0 },
+        { timePeriod: "需", finished: data.temp?.[0] ?? 0, total: data.temp?.[1] ?? 0 },
       ];
       return result;
     },
     handleYearMonthChange() {
-      this.calendarData = this.generateFakeData(this.year, this.month);
+      this.getCalendarData();
       this.calculateWeeks(this.year, this.month);
     },
     // 创建假数据
     generateFakeData(year, month) {
       const daysInMonth = new Date(year, month, 0).getDate();
-      const fakeData = [];
-
       for (let day = 1; day <= daysInMonth; day++) {
-        const total = Math.floor(Math.random() * 100) + 1;
-        const done = Math.floor(Math.random() * (total + 1));
-
-        fakeData.push({
-          day: day,
-          year: year,
-          month: month,
-          completed: true,
-          dayState: {
-            total: total,
-            done: done,
-          },
-          weekState: {
-            total: total,
-            done: done,
-          },
-          monthState: {
-            total: total,
-            done: done,
-          },
-          quarterState: {
-            total: total,
-            done: done,
-          },
-          yearState: {
-            total: total,
-            done: done,
-          },
-          tempState: {
-            total: total,
-            done: done,
-          },
-        });
+        let targetDay = this.calendarData.find((item) => {
+          return item.day === day;
+        })
+        if (targetDay) {
+          continue;
+        } else {
+          let nullObj = {
+            total: null,
+            done: null,
+          }
+          this.calendarData.push({
+            day: day,
+            year: year,
+            month: month,
+            completed: true,
+            dayState: nullObj,
+            weekState: nullObj,
+            monthState: nullObj,
+            quarterState: nullObj,
+            yearState: nullObj,
+            tempState: nullObj,
+          });
+        }
       }
-      return fakeData;
+      console.log(this.calendarData);
     },
     handleDateClick(day) {
       this.$emit('dateClick', {
@@ -146,7 +157,6 @@ export default {
         month: this.month,
         date: day.date
       });
-      // console.log(`Clicked on ${this.year}-${this.month}-${day.date}`);
     },
     cellClass(day) {
       // 当天的背景色为浅绿色
@@ -177,7 +187,6 @@ export default {
           month: currentDay.getMonth() + 1, // 添加月份信息，注意要加 1
           otherMonth: currentDay.getMonth() !== firstDayOfMonth.getMonth(),
         };
-        console.log(day);
         this.days.push(day);
         currentDay.setDate(currentDay.getDate() + 1);
       }
@@ -186,11 +195,24 @@ export default {
   computed: {
     filteredCalendarData() {
       return (day) => {
-        return this.calendarData.filter((data) => data.day === day);
+        return this.calendarData.find((data) => {
+          return data.day === day.date;
+        });
       };
+    },
+    yearMonth() {
+      let month = `${this.month}`.padStart(2, '0');
+      return `${this.year}-${month}`;
     },
   },
   watch: {
+    projectId: {
+      immediate: true,
+      handler() {
+        this.getSummerData();
+        this.getCalendarData();
+      },
+    },
     year() {
       this.handleYearMonthChange();
     },
@@ -200,9 +222,9 @@ export default {
   },
   mounted() {
     // 第一行汇总数据，后期通过接口获取实际数据，通过convertData方法转换后赋值给summerData
-    this.summerData = this.convertData(this.actualDate); 
+    this.getSummerData();
     // 日历里展示的数据，后期通过接口获取实际数据，赋值给calendarData
-    this.calendarData = this.generateFakeData(this.year, this.month);
+    this.getCalendarData();
     this.calculateWeeks(this.year, this.month);
   },
 };
