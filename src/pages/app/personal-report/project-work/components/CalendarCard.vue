@@ -1,8 +1,8 @@
 <!--
  * @Author: cfw2157 yz.caiyijun@h3c.com
  * @Date: 2023-04-28 14:13:46
- * @LastEditors: cfw2157 
- * @LastEditTime: 2023-05-04 17:04:14
+ * @LastEditors: cfw2157 yz.caiyijun@h3c.com
+ * @LastEditTime: 2023-05-05 14:47:14
  * @FilePath: \snong-ui-v2\src\pages\app\personal-report\project-work\components\CalendarCard.vue
  * @Description: 日历组件子组件——日期卡片组件
 -->
@@ -172,7 +172,7 @@ export default {
   background-color: #fbcfd0;
 }
 .bg-grey {
-  background-color: #ccc !important;
+  background-color: #f2f2f2 !important;
 }
 .week-day {
   width: 100%;

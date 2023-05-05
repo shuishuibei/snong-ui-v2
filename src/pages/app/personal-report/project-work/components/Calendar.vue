@@ -28,7 +28,7 @@
         <template v-if="!day.otherMonth">
           <calendar-card
             @click.native="handleDateClick(day)"
-            v-for="data in filteredCalendarData(day.date)"
+            v-for="data in filteredCalendarData(day)"
             :key="data.day"
             :year="data.year"
             :month="data.month"
@@ -108,12 +108,12 @@ export default {
     },
     convertData(data) {
       const result = [
-        { timePeriod: "日", finished: data.day?.[0] || 0, total: data.day?.[1] | 0 },
-        { timePeriod: "周", finished: data.week?.[0] ?? 0, total: data.week?.[1] ?? 0 },
-        { timePeriod: "月", finished: data.month?.[0] ?? 0, total: data.month?.[1] ?? 0 },
-        { timePeriod: "季度", finished: data.quarter?.[0] ?? 0, total: data.quarter?.[1] ?? 0 },
-        { timePeriod: "年", finished: data.year?.[0] ?? 0, total: data.year?.[1] ?? 0 },
-        { timePeriod: "需", finished: data.temp?.[0] ?? 0, total: data.temp?.[1] ?? 0 },
+        { timePeriod: "日", finished: data.day ? data.day[1] : 0, total: data.day ? data.day[0] : 0 },
+        { timePeriod: "周", finished: data.week ? data.week[1] : 0, total: data.week ? data.week[0] : 0 },
+        { timePeriod: "月", finished: data.month ? data.month[1] : 0, total: data.month ? data.month[0] : 0 },
+        { timePeriod: "季度", finished: data.quarter ? data.quarter[1] : 0, total: data.quarter ? data.quarter[0] : 0 },
+        { timePeriod: "年", finished: data.year ? data.year[1] : 0, total: data.year ? data.year[0] : 0 },
+        { timePeriod: "需", finished: data.temp ? data.temp[1] : 0, total: data.temp ? data.temp[0] : 0 }
       ];
       return result;
     },
@@ -190,14 +190,17 @@ export default {
         this.days.push(day);
         currentDay.setDate(currentDay.getDate() + 1);
       }
+      console.log(this.days);
+      console.log('---------------');
     },
   },
   computed: {
     filteredCalendarData() {
       return (day) => {
-        return this.calendarData.find((data) => {
+        let result = this.calendarData.filter((data) => {
           return data.day === day.date;
         });
+        return result;
       };
     },
     yearMonth() {
@@ -220,7 +223,7 @@ export default {
       this.handleYearMonthChange();
     },
   },
-  mounted() {
+  created() {
     // 第一行汇总数据，后期通过接口获取实际数据，通过convertData方法转换后赋值给summerData
     this.getSummerData();
     // 日历里展示的数据，后期通过接口获取实际数据，赋值给calendarData
