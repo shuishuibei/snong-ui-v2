@@ -1,9 +1,12 @@
 <template>
   <div class="task-manage">
     <!-- 顶部 -->
-    <div class="work-list" v-if="dateClickFlag">
-      <work-list></work-list>
-    </div>
+    <work-list
+      v-if="dateClickFlag"
+      :projectName="projectName"
+      :date="workListDate"
+      @close="dateClickFlag = false"
+    ></work-list>
     <div class="content-wrapper" v-else>
       <div class="resourceTree-wrapper cds-padding-14">
         <div class="resource-search">
@@ -39,7 +42,6 @@
         </div>
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -66,6 +68,7 @@ export default {
       projectName: "", // 资源列表当前选中项
       projectId: "", // 资源列表当前选中项的id
       dateClickFlag: false,
+      workListDate: "", // 工作清单页面展示日期
     };
   },
   computed: {
@@ -79,6 +82,7 @@ export default {
   methods: {
     dateClick(params) {
       let { year, month, date } = params;
+      this.workListDate = `${year}/${month}/${date}`;
       this.dateClickFlag = true;
     },
     // 更改日期的格式
@@ -195,7 +199,7 @@ export default {
 }
 .task-manage {
   width: 100%;
-  min-height: 100%;
+  height: 100%;
   position: relative;
   .content-wrapper {
     position: absolute;

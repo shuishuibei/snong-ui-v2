@@ -149,7 +149,6 @@ export default {
           });
         }
       }
-      console.log(this.calendarData);
     },
     handleDateClick(day) {
       this.$emit('dateClick', {
@@ -190,8 +189,6 @@ export default {
         this.days.push(day);
         currentDay.setDate(currentDay.getDate() + 1);
       }
-      console.log(this.days);
-      console.log('---------------');
     },
   },
   computed: {
