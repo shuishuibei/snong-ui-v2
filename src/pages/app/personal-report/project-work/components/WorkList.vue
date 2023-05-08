@@ -1,21 +1,23 @@
 <!--
  * @Author: cfw2157 yz.caiyijun@h3c.com
  * @Date: 2023-05-04 16:34:03
- * @LastEditors:  yz.caiyijun@h3c.com
- * @LastEditTime: 2023-05-06 10:33:44
+ * @LastEditors: cfw2157 yz.caiyijun@h3c.com
+ * @LastEditTime: 2023-05-06 14:00:18
  * @FilePath: \snong-ui-v2\src\pages\app\personal-report\project-work\components\WorkList.vue
  * @Description: 点击日历详情展示页面
 -->
 <template>
   <div class="work-list-wrapper">
     <div class="head">
-      <h2>{{ `${projectName}标准化工作清单确认（${date}）` }}</h2>
+
+      <h3><span style="color: #3399ff">{{ `【${projectName}（${date}）】工作任务列表` }}</span>
+        </h3>
+      <i-button class="button" type="primary" @click="goBack">返回</i-button>
     </div>
-    <div class="menu-bar">
-      <i-button type="primary">新建</i-button>
+<!--    <div class="menu-bar">
+      <i-button type="primary" @click="createWork">新建</i-button>
       <i-button style="margin-left: 10px">确认</i-button>
-      <i-button style="margin-left: 10px" @click="goBack">返回日历</i-button>
-    </div>
+    </div>-->
     <template v-for="(item, index) in tableList">
       <div class="table-container" v-if="item.data.length > 0" :key="index">
         <h2 class="table-label">{{ item.label }}</h2>
@@ -23,6 +25,7 @@
           <template slot-scope="{ row }" slot="action">
             <a @click="upload(row)">上传</a>
             <a @click="download(row)">模板下载</a>
+            <a @click="review(row)">复核</a>
           </template>
         </Table>
       </div>
@@ -35,12 +38,17 @@ export default {
   props: {
     projectName: {
       type: String,
-      default: '',
+      default: "",
+      required: true,
+    },
+    projectId: {
+      type: String,
+      default: "",
       required: true,
     },
     date: {
       type: String,
-      default: '',
+      default: "",
       required: true,
     },
   },
@@ -53,145 +61,158 @@ export default {
       monthData: [],
       tempData: [],
       tableData: [
-        {
-          zoneId: "0888ebdf3831798a0cbdda24815e4519",
-          projectName: "四川政务云-西云",
-          workId: "26e3d8fc3fb09851c3d72f6efca6ff74",
-          workDate: "2023-05-04",
-          workStatus: "undone",
-          completeNum: 0,
-          completeFile: null,
-          reviewer: null,
-          reviewTime: null,
-          executor: null,
-          lastExecutTime: null,
-          workType: "day",
-          workName: "日巡检",
-          workContent:
-            "早晚各一次对关键软硬件进行巡检（关键软件参考项目产品信息）",
-          fixed: false,
-          frequency: 2,
-        },
-        {
-          zoneId: "0888ebdf3831798a0cbdda24815e4519",
-          projectName: "四川政务云-西云",
-          workId: "2ba909fe3925b457a16226e0f1013c17",
-          workDate: "2023-05-04",
-          workStatus: "undone",
-          completeNum: 0,
-          completeFile: null,
-          reviewer: null,
-          reviewTime: null,
-          executor: null,
-          lastExecutTime: null,
-          workType: "day",
-          workName: "机房巡检",
-          workContent: "服务器、存储、网络、安全、机房环境等巡检",
-          fixed: false,
-          frequency: 1,
-        },
+        // {
+        //   zoneId: "0888ebdf3831798a0cbdda24815e4519",
+        //   projectName: "四川政务云-西云",
+        //   workId: "26e3d8fc3fb09851c3d72f6efca6ff74",
+        //   workDate: "2023-05-04",
+        //   workStatus: "undone",
+        //   completeNum: 0,
+        //   completeFile: null,
+        //   reviewer: null,
+        //   reviewTime: null,
+        //   executor: null,
+        //   lastExecutTime: null,
+        //   workType: "day",
+        //   workName: "日巡检",
+        //   workContent:
+        //     "早晚各一次对关键软硬件进行巡检（关键软件参考项目产品信息）",
+        //   fixed: false,
+        //   frequency: 2,
+        // }
       ],
       columns: [
         {
           title: "序号",
           type: "index",
-          align: 'center',
+          align: "center",
           width: 90,
         },
         {
           title: "工作名称",
           key: "workName",
-          align: 'center',
+          align: "center",
         },
         {
           title: "工作内容和要求",
           key: "workContent",
-          align: 'center',
+          // align: "center",
           width: 300,
         },
         {
-          title: "执行人",
-          align: 'center',
-          key: "",
-        },
-        {
-          title: "涉及数据中心",
-          align: 'center',
-          key: "",
+          title: "完成数",
+          key: "completeNum",
+          align: "center"
         },
         {
           title: "频次",
-          align: 'center',
-          key: "",
+          align: "center",
+          key: "frequency",
         },
         {
-          title: "涉及BOM",
-          align: 'center',
-          key: "",
+          title: "执行人",
+          align: "center",
+          key: "executor",
+        },
+        {
+          title: "执行时间",
+          align: "center",
+          key: "lastExecutTime",
+        },
+        {
+          title: "复核人",
+          align: "center",
+          key: "reviewer",
+        },
+        {
+          title: "复核时间",
+          align: "center",
+          key: "reviewTime",
         },
         {
           title: "操作",
-          slot: 'action',
-          align: 'center'
+          slot: "action",
+          align: "center",
         },
       ],
     };
   },
   mounted() {
-    // 调用接口获取tableData
-    this.tableData.forEach((item) => {
-        switch (item.workType) {
-          case 'day': this.dayData.push(item); break;
-          case 'week': this.weekData.push(item); break;
-          case 'year': this.yearData.push(item); break;
-          case 'quarter': this.quarterData.push(item); break;
-          case 'month': this.monthData.push(item); break;
-          case 'temp': this.tempData.push(item); break;
-          default: break;
-        }
-    })
+    this.getTableData();
   },
   methods: {
+    getTableData: function () {
+      this.$loading.show();
+      this.$http.get(`/projectWorkState/day?projectId=${this.projectId}&date=${this.date}`)
+        .then(({data}) => {
+          if (data.status) {
+            this.tableData = data.data;
+            // 调用接口获取tableData
+            this.tableData.forEach((item) => {
+              switch (item.workType) {
+                case "day":
+                  this.dayData.push(item);
+                  break;
+                case "week":
+                  this.weekData.push(item);
+                  break;
+                case "year":
+                  this.yearData.push(item);
+                  break;
+                case "quarter":
+                  this.quarterData.push(item);
+                  break;
+                case "month":
+                  this.monthData.push(item);
+                  break;
+                case "temp":
+                  this.tempData.push(item);
+                  break;
+                default:
+                  break;
+              }
+            });
+          }
+          this.$loading.hide();
+        });
+    },
     // 上传
-    upload(row) {
-
-    },
+    upload(row) {},
     // 下载
-    download(row) {
-
-    },
+    download(row) {},
     goBack() {
-      this.$emit('close');
-    }
+      this.$emit("close");
+    },
+    close() {},
   },
   computed: {
     tableList() {
       return [
         {
-          label: '每日工作',
+          label: "每日工作",
           data: this.dayData,
         },
         {
-          label: '每周工作',
+          label: "每周工作",
           data: this.weekData,
         },
         {
-          label: '每年工作',
+          label: "每年工作",
           data: this.yearData,
         },
         {
-          label: '每季工作',
+          label: "每季工作",
           data: this.quarterData,
         },
         {
-          label: '每月工作',
+          label: "每月工作",
           data: this.monthData,
         },
         {
-          label: '按需工作',
+          label: "按需工作",
           data: this.tempData,
         },
-      ]
+      ];
     },
   },
 };
@@ -200,16 +221,23 @@ export default {
 <style lang="less" scoped>
 .work-list-wrapper {
   width: 100%;
-  height: 100%;
+  //height: 100%;
   background-color: #fff;
   display: flex;
   flex-direction: column;
   .head {
-    height: 76px;
-    padding: 20px 20px;
+    display: flex;
+    height: 55px;
+    padding: 10px 0;
     font-size: 16px;
     font-weight: 800;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 4px solid #ccc;
+    h3 {
+      flex-grow: 1;
+    }
+    .button {
+      margin-right: 10px;
+    }
   }
   .menu-bar {
     height: 52px;

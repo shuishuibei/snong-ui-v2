@@ -16,7 +16,7 @@
       <i-select class="calendar-header-select" v-model="month">
         <i-option v-for="m in months" :key="m" :value="m">{{ `${m}`.padStart(2, '0') }}&nbsp;月</i-option>
       </i-select>
-      <i-button type="primary" class="calendar-header-button">导出报表</i-button>
+      <!--<i-button type="primary" class="calendar-header-button">导出报表</i-button>-->
     </div>
     <div class="calendar-body">
       <div
@@ -52,7 +52,10 @@
 <script>
 import Card from "./Card.vue";
 import CalendarCard from "./CalendarCard.vue";
-
+const today = new Date();
+const year = new Date().getFullYear();
+const years = Array.from({ length: 11 }, (_, i) => year - 5 + i); // 显示从当前年份前5年到后5年的年份
+const months = Array.from({ length: 12 }, (_, i) => i + 1); // 生成1-12月的数组
 export default {
   components: {
     Card,
@@ -61,24 +64,12 @@ export default {
   props: {
     projectId: {
       type: String,
-      required: true,      
+      required: true,
     }
   },
   data() {
-    const today = new Date();
-    const year = new Date().getFullYear();
-    const years = Array.from({ length: 11 }, (_, i) => year - 5 + i); // 显示从当前年份前5年到后5年的年份
-    const months = Array.from({ length: 12 }, (_, i) => i + 1); // 生成1-12月的数组
     return {
       days: [],
-      actualDate: {
-        day: [192, 225],
-        week: [13, 15],
-        month: [1, 1],
-        quarter: [1, 1],
-        year: [0, 0],
-        temp: [1, 1],
-      },
       summerData: [],
       calendarData: [],
       year: today.getFullYear(),
@@ -91,11 +82,13 @@ export default {
   methods: {
      // 获取日历页面日期数据
      getCalendarData() {
+       this.$loading.show();
       this.$http.get(`/projectWorkState/month?projectId=${this.projectId}&yearMonth=${this.yearMonth}`).then(({ data }) => {
         if (data.status) {
           this.calendarData = data.data;
-          this.generateFakeData(this.year, this.month);
+          this.generateData(this.year, this.month);
         }
+        this.$loading.hide();
       });
     },
     // 获取日历页面统计数据
@@ -121,16 +114,15 @@ export default {
       this.getCalendarData();
       this.calculateWeeks(this.year, this.month);
     },
-    // 创建假数据
-    generateFakeData(year, month) {
+    // 生成数据
+    generateData(year, month) {
       const daysInMonth = new Date(year, month, 0).getDate();
       for (let day = 1; day <= daysInMonth; day++) {
         let targetDay = this.calendarData.find((item) => {
           return item.day === day;
         })
-        if (targetDay) {
-          continue;
-        } else {
+        // 当天没有数据，则生成空数据
+        if (!targetDay) {
           let nullObj = {
             total: null,
             done: null,
@@ -262,7 +254,7 @@ export default {
   margin: 5px 0;
 }
 .calendar-cell {
-  width: 145px;
+  width: 165px;
   height: 125px;
   font-size: 16px;
   text-align: center;

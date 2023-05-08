@@ -4,6 +4,7 @@
     <work-list
       v-if="dateClickFlag"
       :projectName="projectName"
+      :projectId="projectId"
       :date="workListDate"
       @close="dateClickFlag = false"
     ></work-list>
@@ -82,7 +83,7 @@ export default {
   methods: {
     dateClick(params) {
       let { year, month, date } = params;
-      this.workListDate = `${year}/${month}/${date}`;
+      this.workListDate = this.$moment(`${year}-${month}-${date}`).format('YYYY-MM-DD');
       this.dateClickFlag = true;
     },
     // 更改日期的格式
@@ -132,7 +133,7 @@ export default {
         ? this.resourceTreeArr[0].title
         : "";
       this.projectId = this.resourceTreeArr[0]
-        ? this.resourceTreeArr[0].title
+        ? this.resourceTreeArr[0].id
         : "";
     },
     // 获取列表数据
