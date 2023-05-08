@@ -2,39 +2,85 @@
  * @Author: cfw2157 yz.caiyijun@h3c.com
  * @Date: 2023-05-04 16:34:03
  * @LastEditors: cfw2157 yz.caiyijun@h3c.com
- * @LastEditTime: 2023-05-06 14:00:18
+ * @LastEditTime: 2023-05-08 14:32:46
  * @FilePath: \snong-ui-v2\src\pages\app\personal-report\project-work\components\WorkList.vue
  * @Description: 点击日历详情展示页面
 -->
 <template>
   <div class="work-list-wrapper">
     <div class="head">
-
-      <h3><span style="color: #3399ff">{{ `【${projectName}（${date}）】工作任务列表` }}</span>
-        </h3>
+      <h3>
+        <span style="color: #3399ff">{{
+          `【${projectName}（${date}）】工作任务列表`
+        }}</span>
+      </h3>
       <i-button class="button" type="primary" @click="goBack">返回</i-button>
     </div>
-<!--    <div class="menu-bar">
+    <!--    <div class="menu-bar">
       <i-button type="primary" @click="createWork">新建</i-button>
       <i-button style="margin-left: 10px">确认</i-button>
     </div>-->
     <template v-for="(item, index) in tableList">
       <div class="table-container" v-if="item.data.length > 0" :key="index">
         <h2 class="table-label">{{ item.label }}</h2>
-        <Table :columns="columns" :data="item.data" border>
-          <template slot-scope="{ row }" slot="action">
-            <a @click="upload(row)">上传</a>
-            <a @click="download(row)">模板下载</a>
-            <a @click="review(row)">复核</a>
-          </template>
-        </Table>
+        <Table :columns="columns" :data="item.data" border> </Table>
       </div>
     </template>
+    <ModalConfirm
+      ref="downloadRef"
+      v-model="flag.download"
+      title="确认模板下载"
+      :info="`确认下载当前模板？`"
+      @on-ok="submitDownLoad"
+      @on-cancel="cancelDownLoad"
+      :showBackgroudColor="false"
+    >
+    </ModalConfirm>
+    <ModalConfirm
+      ref="checkRef"
+      v-model="flag.check"
+      title="复核"
+      :info="`确认复核当前工作？`"
+      @on-ok="submitCheck"
+      @on-cancel="cancelCheck"
+      :showBackgroudColor="false"
+    >
+    </ModalConfirm>
+    <ModalConfirm
+      ref="uploadRef"
+      v-model="flag.upload"
+      title="上传"
+      :info="`确认上传当前工作？`"
+      @on-ok="submitUpload"
+      @on-cancel="cancelUpload"
+      :showBackgroudColor="false"
+    >
+      <Upload
+        multiple
+        type="drag"
+        action="uploadUrl"
+        @on-success="uploadSuccess"
+        @on-error="uploadError"
+      >
+        <div style="padding: 20px 0">
+          <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+          <p>点击或拖拽文件进行上传</p>
+        </div>
+      </Upload>
+    </ModalConfirm>
   </div>
 </template>
 
 <script>
+import TableOperation from "./TableOperation.vue";
+import ModalConfirm from "@/components/modal-confirm/ModalConfirmTemp";
+
 export default {
+  name: "WorkList",
+  components: {
+    ModalConfirm,
+    TableOperation,
+  },
   props: {
     projectName: {
       type: String,
@@ -54,6 +100,15 @@ export default {
   },
   data() {
     return {
+      uploadUrl: '', // 文件上传的路径
+      flag: {
+        download: false,
+        check: false,
+        upload: false,
+      },
+      downLoadData: {}, // 下载模板数据
+      checkData: {}, // 复核数据
+      uploadData: {}, // 上传数据
       dayData: [],
       weekData: [],
       yearData: [],
@@ -96,13 +151,12 @@ export default {
         {
           title: "工作内容和要求",
           key: "workContent",
-          // align: "center",
           width: 300,
         },
         {
           title: "完成数",
           key: "completeNum",
-          align: "center"
+          align: "center",
         },
         {
           title: "频次",
@@ -133,18 +187,69 @@ export default {
           title: "操作",
           slot: "action",
           align: "center",
+          render: (h, params) => {
+            return h(TableOperation, {
+              props: {
+                params,
+              },
+            });
+          },
         },
       ],
     };
   },
   mounted() {
     this.getTableData();
+    this.$on("download", (row) => {
+      this.flag.download = true;
+      this.downLoadData = row;
+    });
+    this.$on("check", (row) => {
+      this.flag.check = true;
+      this.checkData = row;
+    });
+    this.$on("upload", (row) => {
+      this.flag.upload = true;
+      this.uploadData = row;
+    });
   },
   methods: {
+    submitDownLoad() {
+      // 调用下载接口，当前表格项数据：this.downLoadData
+      console.log(this.downLoadData);
+    },
+    submitCheck() {
+      // 调用复核接口，当前表格项数据：this.checkData
+      console.log(this.checkData);
+    },
+    // 
+    submitUpload() {
+      console.log(this.checkData);
+    },
+    // 上传成功回调
+    uploadSuccess(response, file, fileList) {
+
+    },
+    // 上传失败回调
+    uploadError(error, file, fileList) {
+
+    },
+    cancelDownLoad() {
+      this.flag.download = false;
+    },
+    cancelCheck() {
+      this.flag.check = false;
+    },
+    cancelUpload() {
+      this.flag.upload = false;
+    },
     getTableData: function () {
       this.$loading.show();
-      this.$http.get(`/projectWorkState/day?projectId=${this.projectId}&date=${this.date}`)
-        .then(({data}) => {
+      this.$http
+        .get(
+          `/projectWorkState/day?projectId=${this.projectId}&date=${this.date}`
+        )
+        .then(({ data }) => {
           if (data.status) {
             this.tableData = data.data;
             // 调用接口获取tableData
